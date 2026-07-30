@@ -60,7 +60,7 @@
 #define DOCTEST_TOSTR(x) DOCTEST_TOSTR_IMPL(x)
 
 // clang-format off
-#define DOCTEST_VERSION_STR                                                                                            \
+#define DOCTEST_VERSION_STR "v2.5.0-33-gad67323-datadiode" + 0 * sizeof                                                \
     DOCTEST_TOSTR(DOCTEST_VERSION_MAJOR) "."                                                                           \
     DOCTEST_TOSTR(DOCTEST_VERSION_MINOR) "."                                                                           \
     DOCTEST_TOSTR(DOCTEST_VERSION_PATCH)
@@ -2996,25 +2996,8 @@ DOCTEST_CLANG_SUPPRESS_WARNING_POP
     template <>                                                                                                        \
     void test_case<f>()
 
-#define DOCTEST_CREATE_AND_REGISTER_FUNCTION_IN_CLASS(f, proxy, decorators)                                            \
-    static doctest::detail::funcType proxy() {                                                                         \
-        return f;                                                                                                      \
-    }                                                                                                                  \
-    DOCTEST_REGISTER_FUNCTION(inline, proxy(), decorators)                                                             \
-    static void f()
-
 // for registering tests
 #define DOCTEST_TEST_CASE(decorators) DOCTEST_CREATE_AND_REGISTER_FUNCTION(DOCTEST_COUNTER, decorators)
-
-// for registering tests in classes - requires C++17 for inline variables!
-#if DOCTEST_CPLUSPLUS >= 201703L
-#define DOCTEST_TEST_CASE_CLASS(decorators)                                                                            \
-    DOCTEST_CREATE_AND_REGISTER_FUNCTION_IN_CLASS(                                                                     \
-        DOCTEST_ANONYMOUS(DOCTEST_ANON_FUNC_), DOCTEST_ANONYMOUS(DOCTEST_ANON_PROXY_), decorators                      \
-    )
-#else // DOCTEST_TEST_CASE_CLASS
-#define DOCTEST_TEST_CASE_CLASS(...) TEST_CASES_CAN_BE_REGISTERED_IN_CLASSES_ONLY_IN_CPP17_MODE_OR_WITH_VS_2017_OR_NEWER
-#endif // DOCTEST_TEST_CASE_CLASS
 
 // for registering tests with a fixture
 #define DOCTEST_TEST_CASE_FIXTURE(c, decorators)                                                                       \
@@ -3413,9 +3396,6 @@ DOCTEST_CLANG_SUPPRESS_WARNING_POP
 // for registering tests
 #define DOCTEST_TEST_CASE(name) DOCTEST_CREATE_AND_REGISTER_FUNCTION(DOCTEST_COUNTER, name)
 
-// for registering tests in classes
-#define DOCTEST_TEST_CASE_CLASS(name) DOCTEST_CREATE_AND_REGISTER_FUNCTION(DOCTEST_COUNTER, name)
-
 // for registering tests with a fixture
 #define DOCTEST_TEST_CASE_FIXTURE(x, name)                                                                             \
     DOCTEST_IMPLEMENT_FIXTURE(DOCTEST_ANONYMOUS(DOCTEST_ANON_CLASS_), x, DOCTEST_ANONYMOUS(DOCTEST_ANON_FUNC_), name)
@@ -3762,7 +3742,6 @@ DOCTEST_RELATIONAL_OP(ge, >=)
 // BDD style macros
 // clang-format off
 #define DOCTEST_SCENARIO(name)                                        DOCTEST_TEST_CASE("  Scenario: " name)
-#define DOCTEST_SCENARIO_CLASS(name)                            DOCTEST_TEST_CASE_CLASS("  Scenario: " name)
 #define DOCTEST_SCENARIO_METHOD(x, name)                   DOCTEST_TEST_CASE_FIXTURE(x, "  Scenario: " name)
 #define DOCTEST_SCENARIO_TEMPLATE(name, T, ...)              DOCTEST_TEST_CASE_TEMPLATE("  Scenario: " name, T, __VA_ARGS__)
 #define DOCTEST_SCENARIO_TEMPLATE_DEFINE(name, T, id) DOCTEST_TEST_CASE_TEMPLATE_DEFINE("  Scenario: " name, T, id)
@@ -3779,7 +3758,6 @@ DOCTEST_RELATIONAL_OP(ge, >=)
 #ifndef DOCTEST_CONFIG_NO_SHORT_MACRO_NAMES
 
 #define TEST_CASE(name) DOCTEST_TEST_CASE(name)
-#define TEST_CASE_CLASS(name) DOCTEST_TEST_CASE_CLASS(name)
 #define TEST_CASE_FIXTURE(x, name) DOCTEST_TEST_CASE_FIXTURE(x, name)
 #define TYPE_TO_STRING_AS(str, ...) DOCTEST_TYPE_TO_STRING_AS(str, __VA_ARGS__)
 #define TYPE_TO_STRING(...) DOCTEST_TYPE_TO_STRING(__VA_ARGS__)
@@ -3853,7 +3831,6 @@ DOCTEST_RELATIONAL_OP(ge, >=)
 
 #define SCENARIO(name) DOCTEST_SCENARIO(name)
 #define SCENARIO_METHOD(x, name) DOCTEST_SCENARIO_METHOD(x, name)
-#define SCENARIO_CLASS(name) DOCTEST_SCENARIO_CLASS(name)
 #define SCENARIO_TEMPLATE(name, T, ...) DOCTEST_SCENARIO_TEMPLATE(name, T, __VA_ARGS__)
 #define SCENARIO_TEMPLATE_DEFINE(name, T, id) DOCTEST_SCENARIO_TEMPLATE_DEFINE(name, T, id)
 #define GIVEN(name) DOCTEST_GIVEN(name)

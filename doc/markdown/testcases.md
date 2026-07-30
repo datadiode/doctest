@@ -12,9 +12,6 @@ Test cases and subcases are very easy to use in practice:
 _test name_ and _subcase name_ are free form, quoted, strings. Test names don't have to be unique within the **doctest**
 executable. They should also be string literals.
 
-It is possible to write test cases inside of class bodies in C++17 with the help of `TEST_CASE_CLASS()` -
-used just like `TEST_CASE()` - making testing private parts of classes easier.
-
 Keep in mind that even though **doctest** is [**thread-safe**](faq.md#is-doctest-thread-aware) - using subcases
 has to be done only in the main test runner thread.
 
