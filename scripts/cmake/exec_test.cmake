@@ -13,6 +13,10 @@
 
 string(REPLACE " " ";" COMMAND_LIST ${COMMAND})
 set(cmd COMMAND ${COMMAND_LIST} RESULT_VARIABLE CMD_RESULT)
+
+# hide version string additions which identify releases from this fork
+list(APPEND cmd COMMAND sed "'s/v\\([[:digit:]]\\+[[:punct:]][[:digit:]]\\+[[:punct:]][[:digit:]]\\+\\)-[[:digit:]]\\+-[[:alnum:]]\\+-[[:alnum:]]\\+/\\\\1/g'")
+
 if("${TEST_MODE}" STREQUAL "COLLECT")
     list(APPEND cmd OUTPUT_FILE ${TEST_OUTPUT_FILE} ERROR_FILE ${TEST_OUTPUT_FILE})
 elseif("${TEST_MODE}" STREQUAL "COMPARE")
