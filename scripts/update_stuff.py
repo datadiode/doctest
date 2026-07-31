@@ -14,7 +14,7 @@ version_minor = str(getVersionTuple(version)[1])
 version_patch = str(getVersionTuple(version)[2])
 
 version_str = [
-    subprocess.check_output(['git', 'describe', '--tags']).decode('ascii').strip(),
+    subprocess.check_output(['git', 'describe']).decode('ascii').strip(),
     subprocess.check_output(['git', 'config', 'user.name']).decode('ascii').strip()
 ]
 

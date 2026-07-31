@@ -62,8 +62,8 @@ int instantiationHelper(const T &) noexcept {
 #endif // DOCTEST_CONFIG_VOID_CAST_EXPRESSIONS
 
 // registers the test by initializing a dummy var with a function
-#define DOCTEST_REGISTER_FUNCTION(global_prefix, f, decorators)                                                        \
-    global_prefix DOCTEST_GLOBAL_NO_WARNINGS(                                                                          \
+#define DOCTEST_REGISTER_FUNCTION(f, decorators)                                                                       \
+    DOCTEST_GLOBAL_NO_WARNINGS(                                                                                        \
         DOCTEST_ANONYMOUS(DOCTEST_ANON_VAR_), /* NOLINT */                                                             \
         doctest::detail::regTest(                                                                                      \
             doctest::detail::TestCase(f, __FILE__, __LINE__, doctest_detail_test_suite_ns::getCurrentTestSuite()) *    \
@@ -80,7 +80,7 @@ int instantiationHelper(const T &) noexcept {
         der v;                                                                                                         \
         v.f();                                                                                                         \
     }                                                                                                                  \
-    DOCTEST_REGISTER_FUNCTION(DOCTEST_EMPTY, func, decorators)                                                         \
+    DOCTEST_REGISTER_FUNCTION(func, decorators)                                                                        \
     }                                                                                                                  \
     DOCTEST_INLINE_NOINLINE void der::f() // NOLINT(misc-definitions-in-headers)
 
@@ -95,7 +95,7 @@ DOCTEST_CLANG_SUPPRESS_WARNING_POP
     static void test_case();                                                                                           \
     template <>                                                                                                        \
     void test_case<f>();                                                                                               \
-    DOCTEST_REGISTER_FUNCTION(DOCTEST_EMPTY, test_case<f>, decorators)                                                 \
+    DOCTEST_REGISTER_FUNCTION(test_case<f>, decorators)                                                                \
     template <>                                                                                                        \
     void test_case<f>()
 
