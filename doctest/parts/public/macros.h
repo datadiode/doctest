@@ -87,17 +87,19 @@ int instantiationHelper(const T &) noexcept {
 DOCTEST_CLANG_SUPPRESS_WARNING_PUSH
 DOCTEST_CLANG_SUPPRESS_WARNING("-Wunused-template")
 template <int>
-static void test_case();
+static void doctest_backdoor();
+template <int>
+static void doctest_backdoorDOCTEST_BACKDOOR();
 DOCTEST_CLANG_SUPPRESS_WARNING_POP
 
 #define DOCTEST_CREATE_AND_REGISTER_FUNCTION(f, decorators)                                                            \
     template <int>                                                                                                     \
-    static void test_case();                                                                                           \
+    static void DOCTEST_CAT(doctest_backdoor, DOCTEST_BACKDOOR)();                                                     \
     template <>                                                                                                        \
-    void test_case<f>();                                                                                               \
-    DOCTEST_REGISTER_FUNCTION(test_case<f>, decorators)                                                                \
+    void DOCTEST_CAT(doctest_backdoor, DOCTEST_BACKDOOR)<f>();                                                         \
+    DOCTEST_REGISTER_FUNCTION(DOCTEST_CAT(doctest_backdoor, DOCTEST_BACKDOOR) < f >, decorators)                       \
     template <>                                                                                                        \
-    void test_case<f>()
+    void DOCTEST_CAT(doctest_backdoor, DOCTEST_BACKDOOR)<f>()
 
 // for registering tests
 #define DOCTEST_TEST_CASE(decorators) DOCTEST_CREATE_AND_REGISTER_FUNCTION(DOCTEST_COUNTER, decorators)
