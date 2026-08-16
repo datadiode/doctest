@@ -60,7 +60,7 @@
 #define DOCTEST_TOSTR(x) DOCTEST_TOSTR_IMPL(x)
 
 // clang-format off
-#define DOCTEST_VERSION_STR "v2.5.0-36-g5c05373-datadiode" + 0 * sizeof                                                \
+#define DOCTEST_VERSION_STR "v2.5.0-41-gf287206-datadiode" + 0 * sizeof                                                \
     DOCTEST_TOSTR(DOCTEST_VERSION_MAJOR) "."                                                                           \
     DOCTEST_TOSTR(DOCTEST_VERSION_MINOR) "."                                                                           \
     DOCTEST_TOSTR(DOCTEST_VERSION_PATCH)
@@ -2985,7 +2985,8 @@ DOCTEST_CLANG_SUPPRESS_WARNING("-Wunused-template")
 template <int>
 static void doctest_backdoor();
 template <int>
-static void doctest_backdoorDOCTEST_BACKDOOR();
+static void doctest_frontdoor();
+#define doctest_backdoorDOCTEST_BACKDOOR doctest_frontdoor
 DOCTEST_CLANG_SUPPRESS_WARNING_POP
 
 #define DOCTEST_CREATE_AND_REGISTER_FUNCTION(f, decorators)                                                            \
