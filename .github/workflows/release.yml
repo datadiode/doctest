@@ -14,6 +14,8 @@ jobs:
       contents: write
     steps:
       - uses: actions/checkout@v6
+      - run: python scripts/update_stuff.py
+      - run: python scripts/assemble.py
       - run: git archive "$GITHUB_REF" -o "doctest-${GITHUB_REF:10}.tar.gz"
       - run: gh release upload "${GITHUB_REF:10}" "doctest-${GITHUB_REF:10}.tar.gz"
         env:
