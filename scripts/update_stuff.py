@@ -2,6 +2,10 @@
 
 import fileinput
 import subprocess
+import os
+import sys
+
+os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
 # the version of the release
 with open("version.txt") as f: version = f.read()
@@ -15,7 +19,7 @@ version_patch = str(getVersionTuple(version)[2])
 
 version_str = [
     subprocess.check_output(['git', 'describe']).decode('ascii').strip(),
-    subprocess.check_output(['git', 'config', 'user.name']).decode('ascii').strip()
+    sys.argv[1]
 ]
 
 # update version in the header file
