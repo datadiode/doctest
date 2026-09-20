@@ -60,7 +60,7 @@
 #define DOCTEST_TOSTR(x) DOCTEST_TOSTR_IMPL(x)
 
 // clang-format off
-#define DOCTEST_VERSION_STR "v2.5.0-41-gf287206-datadiode" + 0 * sizeof                                                \
+#define DOCTEST_VERSION_STR "v2.5.0-43-g78897a2-datadiode" + 0 * sizeof                                                \
     DOCTEST_TOSTR(DOCTEST_VERSION_MAJOR) "."                                                                           \
     DOCTEST_TOSTR(DOCTEST_VERSION_MINOR) "."                                                                           \
     DOCTEST_TOSTR(DOCTEST_VERSION_PATCH)
@@ -2138,6 +2138,28 @@ DOCTEST_SUPPRESS_PUBLIC_WARNINGS_PUSH
 
 namespace doctest {
 
+enum class filterable { off, on };
+
+class DOCTEST_INTERFACE DecoratedName : public String {
+public:
+    using String::String;
+    bool m_filterable = true;
+    DecoratedName operator+(const DecoratedName &other) {
+        DecoratedName result = *this;
+        result += other;
+        return result;
+    }
+    DecoratedName &operator*(filterable f) noexcept {
+        m_filterable = (f == filterable::on);
+        return *this;
+    }
+    template <typename T>
+    DecoratedName &operator->*(const T &in) {
+        String::operator=(in);
+        return *this;
+    }
+};
+
 struct DOCTEST_INTERFACE SubcaseSignature {
     String m_name;
     const char *m_file;
@@ -2153,7 +2175,7 @@ struct DOCTEST_INTERFACE Subcase {
     SubcaseSignature m_signature;
     bool m_entered = false;
 
-    Subcase(const String &name, const char *file, int line);
+    Subcase(const DecoratedName &name, const char *file, int line);
     Subcase(const Subcase &) = delete;
     Subcase(Subcase &&) = delete;
     Subcase &operator=(const Subcase &) = delete;
@@ -3079,7 +3101,20 @@ DOCTEST_CLANG_SUPPRESS_WARNING_POP
 // for subcases
 #define DOCTEST_SUBCASE(name)                                                                                          \
     if (const doctest::detail::Subcase &DOCTEST_ANONYMOUS(DOCTEST_ANON_SUBCASE_) DOCTEST_UNUSED =                      \
-            doctest::detail::Subcase(name, __FILE__, __LINE__))
+            doctest::detail::Subcase(doctest::DecoratedName()->*name, __FILE__, __LINE__))
+
+#define DOCTEST_FIXTURE_SETUP(f)                                                                                       \
+    *f;                                                                                                                \
+    try {                                                                                                              \
+    DOCTEST_SUBCASE("Fixture Setup" * doctest::filterable::off) f
+
+#define DOCTEST_FIXTURE_CLEANUP(f)                                                                                     \
+    DOCTEST_SUBCASE("Fixture Cleanup" * doctest::filterable::off) delete f;                                            \
+    }                                                                                                                  \
+    catch (...) {                                                                                                      \
+        delete f;                                                                                                      \
+        throw;                                                                                                         \
+    }
 
 // for generating value-parameterized test inputs
 #define DOCTEST_GENERATE(...) doctest::detail::acquireGeneratorValue(__VA_ARGS__)
@@ -3425,6 +3460,8 @@ DOCTEST_CLANG_SUPPRESS_WARNING_POP
 
 // for subcases
 #define DOCTEST_SUBCASE(name)
+#define DOCTEST_FIXTURE_SETUP(f)
+#define DOCTEST_FIXTURE_CLEANUP(f)
 
 // for generating value-parameterized test inputs
 #define DOCTEST_GENERATE_IMPL(first, ...) (first)
@@ -3774,6 +3811,8 @@ DOCTEST_RELATIONAL_OP(ge, >=)
 #define TEST_CASE_TEMPLATE_INVOKE(id, ...) DOCTEST_TEST_CASE_TEMPLATE_INVOKE(id, __VA_ARGS__)
 #define TEST_CASE_TEMPLATE_APPLY(id, ...) DOCTEST_TEST_CASE_TEMPLATE_APPLY(id, __VA_ARGS__)
 #define SUBCASE(name) DOCTEST_SUBCASE(name)
+#define FIXTURE_SETUP(f) DOCTEST_FIXTURE_SETUP(f)
+#define FIXTURE_CLEANUP(f) DOCTEST_FIXTURE_CLEANUP(f)
 #define GENERATE(...) DOCTEST_GENERATE(__VA_ARGS__)
 #define TEST_SUITE(decorators) DOCTEST_TEST_SUITE(decorators)
 #define TEST_SUITE_USING(decorators) DOCTEST_TEST_SUITE_USING(decorators)
@@ -8587,9 +8626,9 @@ bool Subcase::checkFilters() {
     return false;
 }
 
-Subcase::Subcase(const String &name, const char *file, int line)
-    : m_signature({name, file, line}) {
-    if (checkFilters())
+Subcase::Subcase(const DecoratedName &name, const char *file, int line)
+    : m_signature({static_cast<const String &>(name), file, line}) {
+    if (name.m_filterable && checkFilters())
         return;
 
     if (!g_cs->traversal.tryEnterSubcase(m_signature))

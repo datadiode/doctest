@@ -17,7 +17,7 @@
 #define DOCTEST_TOSTR(x) DOCTEST_TOSTR_IMPL(x)
 
 // clang-format off
-#define DOCTEST_VERSION_STR "v2.5.0-41-gf287206-datadiode" + 0 * sizeof                                                \
+#define DOCTEST_VERSION_STR "v2.5.0-43-g78897a2-datadiode" + 0 * sizeof                                                \
     DOCTEST_TOSTR(DOCTEST_VERSION_MAJOR) "."                                                                           \
     DOCTEST_TOSTR(DOCTEST_VERSION_MINOR) "."                                                                           \
     DOCTEST_TOSTR(DOCTEST_VERSION_PATCH)
