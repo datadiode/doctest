@@ -8628,7 +8628,7 @@ bool Subcase::checkFilters() {
 }
 
 Subcase::Subcase(const DecoratedName &name, const char *file, int line)
-    : m_signature({name, file, line}) {
+    : m_signature({static_cast<const String &>(name), file, line}) {
     if (name.m_filterable && checkFilters())
         return;
 
