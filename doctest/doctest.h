@@ -2153,6 +2153,11 @@ public:
         m_filterable = (f == filterable::on);
         return *this;
     }
+    template <typename T>
+    DecoratedName &operator->*(const T &in) {
+        String::operator=(in);
+        return *this;
+    }
 };
 
 struct DOCTEST_INTERFACE SubcaseSignature {
@@ -3101,15 +3106,15 @@ int instantiationHelper(const T &) noexcept {
 // for subcases
 #define DOCTEST_SUBCASE(name)                                                                                          \
     if (const doctest::detail::Subcase &DOCTEST_ANONYMOUS(DOCTEST_ANON_SUBCASE_) DOCTEST_UNUSED =                      \
-            doctest::detail::Subcase(name, __FILE__, __LINE__))
+            doctest::detail::Subcase(doctest::DecoratedName()->*name, __FILE__, __LINE__))
 
 #define DOCTEST_FIXTURE_SETUP(f)                                                                                       \
     *f;                                                                                                                \
     try {                                                                                                              \
-    DOCTEST_SUBCASE(doctest::DecoratedName("Fixture Setup") * doctest::filterable::off) f
+    DOCTEST_SUBCASE("Fixture Setup" * doctest::filterable::off) f
 
 #define DOCTEST_FIXTURE_CLEANUP(f)                                                                                     \
-    DOCTEST_SUBCASE(doctest::DecoratedName("Fixture Cleanup") * doctest::filterable::off) delete f;                    \
+    DOCTEST_SUBCASE("Fixture Cleanup" * doctest::filterable::off) delete f;                                            \
     }                                                                                                                  \
     catch (...) {                                                                                                      \
         delete f;                                                                                                      \

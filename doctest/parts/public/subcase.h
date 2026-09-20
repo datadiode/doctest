@@ -22,6 +22,11 @@ public:
         m_filterable = (f == filterable::on);
         return *this;
     }
+    template <typename T>
+    DecoratedName &operator->*(const T &in) {
+        String::operator=(in);
+        return *this;
+    }
 };
 
 struct DOCTEST_INTERFACE SubcaseSignature {
