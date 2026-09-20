@@ -7,6 +7,23 @@ DOCTEST_SUPPRESS_PUBLIC_WARNINGS_PUSH
 
 namespace doctest {
 
+enum class filterable { off, on };
+
+class DOCTEST_INTERFACE DecoratedName : public String {
+public:
+    using String::String;
+    bool m_filterable = true;
+    DecoratedName operator+(const DecoratedName &other) {
+        DecoratedName result = *this;
+        result += other;
+        return result;
+    }
+    DecoratedName &operator*(filterable f) noexcept {
+        m_filterable = (f == filterable::on);
+        return *this;
+    }
+};
+
 struct DOCTEST_INTERFACE SubcaseSignature {
     String m_name;
     const char *m_file;
@@ -22,7 +39,7 @@ struct DOCTEST_INTERFACE Subcase {
     SubcaseSignature m_signature;
     bool m_entered = false;
 
-    Subcase(const String &name, const char *file, int line);
+    Subcase(const DecoratedName &name, const char *file, int line);
     Subcase(const Subcase &) = delete;
     Subcase(Subcase &&) = delete;
     Subcase &operator=(const Subcase &) = delete;

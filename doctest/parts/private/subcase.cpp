@@ -34,9 +34,9 @@ bool Subcase::checkFilters() {
     return false;
 }
 
-Subcase::Subcase(const String &name, const char *file, int line)
+Subcase::Subcase(const DecoratedName &name, const char *file, int line)
     : m_signature({name, file, line}) {
-    if (checkFilters())
+    if (name.m_filterable && checkFilters())
         return;
 
     if (!g_cs->traversal.tryEnterSubcase(m_signature))
